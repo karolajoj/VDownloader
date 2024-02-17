@@ -1,0 +1,15 @@
+1. App Icon
+	
+	> File Format: ICO 
+	> Go to Properties of project in Solution Explorer (NOT Solution Properties)
+	> In Application tab change icon
+
+	> The .ico apeared in Solution Explorer
+	> in .ico Properties change Built Action to Embedded Resource
+
+2. Publishing
+	
+	> Clean Solution
+	> Publisz
+	> Install (Firstly Uninstall previous version and RESTART PC)
+
