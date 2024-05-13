@@ -532,9 +532,9 @@
 
                 <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Bottom">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding Progress}" VerticalAlignment="Bottom" />
-                        <TextBlock Text="30.0MB/s of 140.0MB   " VerticalAlignment="Bottom" FontSize="12" Foreground="Gray"/>
-                        <TextBlock Text="{Binding Status}" VerticalAlignment="Bottom" FontSize="12" Foreground="Gray"/>
+                        <TextBlock Text="{Binding Progress}" VerticalAlignment="Bottom" FontSize="12" Foreground="Gray"/>
+                        <!--<TextBlock Text="30.0MB/s of 140.0MB   " VerticalAlignment="Bottom" FontSize="12" Foreground="Gray"/>-->
+                        <TextBlock Text="{Binding Status}" VerticalAlignment="Bottom" FontSize="12" Foreground="Gray" Margin="10 0 0 0"/>
                     </StackPanel>
                     <ProgressBar Value="{Binding DownloadProgress}" Height="5" Margin="0 0 0 20"/>
 

@@ -13,3 +13,7 @@
 	> Publisz
 	> Install (Firstly Uninstall previous version and RESTART PC)
 
+3. Dodawanie Resources
+	> Przenie? do Folderu Resources (przez Visual Studio) lub w Solution Explorer -> Add -> Existing item
+	> Ustawi? Build Action na Resource
+	> Clean Solution

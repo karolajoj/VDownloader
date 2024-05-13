@@ -12,20 +12,113 @@ using YoutubeExplode.Common;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Media.Effects;
+using System.ComponentModel;
+using System.Windows.Media;
+using System.Net.Http;
 
 namespace VDownloader {
 
-    public class List_Element {
+    public class List_Element
+    {
         public string URL { get; set; }
         public string Title { get; set; }
         public string Progress { get; set; }
         public string Status { get; set; }
+        public int DownloadProgress { get; set; }
         public BitmapImage Thumbnail { get; set; }
 
-        public List_Element() {
+        public List_Element()
+        {
             Thumbnail = new BitmapImage(new Uri("pack://application:,,,/Resources/NoThumbnail.png"));
         }
     }
+
+
+    //public class List_Element : INotifyPropertyChanged
+    //    {
+    //        private string _url;
+    //        public string URL
+    //        {
+    //            get { return _url; }
+    //            set
+    //            {
+    //                if (_url != value)
+    //                {
+    //                    _url = value;
+    //                    OnPropertyChanged(nameof(URL));
+    //                }
+    //            }
+    //        }
+
+    //        private string _title;
+    //        public string Title
+    //        {
+    //            get { return _title; }
+    //            set
+    //            {
+    //                if (_title != value)
+    //                {
+    //                    _title = value;
+    //                    OnPropertyChanged(nameof(Title));
+    //                }
+    //            }
+    //        }
+
+    //        private string _progress;
+    //        public string Progress
+    //        {
+    //            get { return _progress; }
+    //            set
+    //            {
+    //                if (_progress != value)
+    //                {
+    //                    _progress = value;
+    //                    OnPropertyChanged(nameof(Progress));
+    //                }
+    //            }
+    //        }
+
+    //        private string _status;
+    //        public string Status
+    //        {
+    //            get { return _status; }
+    //            set
+    //            {
+    //                if (_status != value)
+    //                {
+    //                    _status = value;
+    //                    OnPropertyChanged(nameof(Status));
+    //                }
+    //            }
+    //        }
+
+    //        private BitmapImage _thumbnail;
+    //        public BitmapImage Thumbnail
+    //        {
+    //            get { return _thumbnail; }
+    //            set
+    //            {
+    //                if (_thumbnail != value)
+    //                {
+    //                    _thumbnail = value;
+    //                    OnPropertyChanged(nameof(Thumbnail));
+    //                }
+    //            }
+    //        }
+
+    //        public List_Element()
+    //        {
+    //            Thumbnail = new BitmapImage(new Uri("pack://application:,,,/Resources/NoThumbnail.png"));
+    //        }
+
+    //        public event PropertyChangedEventHandler PropertyChanged;
+
+    //        protected virtual void OnPropertyChanged(string propertyName)
+    //        {
+    //            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    //        }
+    //    }
+
 
 
     public partial class MainWindow : Window {
@@ -42,15 +135,6 @@ namespace VDownloader {
             MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
 
             Downloading_Tab.IsChecked = true;
-
-            downloadingItem.Add(new List_Element { URL = "https://www.youtube.com/watch?v=_U-cncVYIxI", Status  = "" });
-            downloadingItem.Add(new List_Element { Title = "Mój Tytul", Status  = "Nie można pobrać filmu" });
-            downloadingItem.Add(new List_Element { Title = "Mój Tytul", Status  = "Nie można pobrać filmu" });
-            downloadingItem.Add(new List_Element { Title = "Mój Tytul", Status  = "Nie można pobrać filmu" });
-            downloadingItem.Add(new List_Element { Title = "Mój Tytul", Status  = "Nie można pobrać filmu" });
-            downloadingItem.Add(new List_Element { Title = "Mój Tytul", Status  = "Nie można pobrać filmu" });
-            downloadingItem.Add(new List_Element { Title = "Mój Tytul", Status  = "Nie można pobrać filmu" });
-            downloadingItem.Add(new List_Element  { Title = "Mój Tytul", Status  = "Nie można pobrać filmu" });
 
             downloadedItem.Add(new List_Element { Title = "Pobrane List_Element", Status  = "" });
             downloadedItem.Add(new List_Element { Title = "Pobrane List_Element", Status  = "Nie można pobrać filmu" });
@@ -244,29 +328,29 @@ namespace VDownloader {
 
         #region Helper Functions
 
-        async Task DownloadPlaylist(List_Element video) {
-            try {
+        async Task DownloadPlaylist(List_Element video)
+        {
+            try
+            {
                 YoutubeClient youtubeClient = new YoutubeClient();
                 var videos = await youtubeClient.Playlists.GetVideosAsync(video.URL);
 
-                //WindowSettings settingsForm = new WindowSettings();
-                //string saveDirectory = settingsForm.GetSaveDirectory();
-
-                foreach (var file in videos) {
-                    List_Element playlistVideo = new List_Element {
+                foreach (var file in videos)
+                {
+                    List_Element playlistVideo = new List_Element
+                    {
                         URL = file.Id,
                         Title = file.Title,
                         Status = "Paused"
                     };
 
-                    // Tworzymy obrazek
-                    BitmapImage bitmap = new BitmapImage(new Uri(file.Thumbnails[0].Url));
-
-                    downloadingItem.Add(playlistVideo);
+                    DownloadVideo(playlistVideo);
                 }
+
                 VideoList_DataGrid.Items.Refresh();
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 video.Status = ex.Message;
             }
         }
@@ -291,8 +375,11 @@ namespace VDownloader {
 
                 // Po pobraniu danych aktualizujemy miniaturę i tytuł wideo
                 file.Title = videoInfo.Title;
-                file.Thumbnail = new BitmapImage(new Uri(videoInfo.Thumbnails[0].Url));
-
+                // Thumbnails[i] dla i = 5,6,7 DZIAŁA
+                // Thumbnails[5] 120x90  X
+                // Thumbnails[6] 320x180 <-Najlepsze proporcje
+                // Thumbnails[7] 480x360 X
+                file.Thumbnail = new BitmapImage(new Uri(videoInfo.Thumbnails[6].Url)); 
 
                 // Odświeżamy widok DataGrid, aby uwzględnić zaktualizowany element
                 VideoList_DataGrid.Items.Refresh();
